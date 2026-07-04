@@ -1,7 +1,7 @@
 """
 Created on Mon May  8 02:18:30 2023
 """
-from JeuMorpion import morpion
+from plateau import affichage_complet
 
 
 def main():
@@ -13,9 +13,9 @@ def main():
         try:
             choice = int(input("Enter your choice (1, 2, or 3): "))
             if choice == 1:
-                print("Othello n'est pas encore disponible !")
+                affichage_complet()
             elif choice == 2:
-                morpion()
+                print("Morpion !")
             elif choice == 3:
                 print("Thank you for playing. Goodbye!")
                 break
