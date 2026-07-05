@@ -1,90 +1,94 @@
-# Morpion (Tic-Tac-Toe) — IA MinMax avec élagage Alpha-Bêta
+# Othello — IA MinMax avec élagage Alpha-Bêta
 
-Branche `morpion` du projet **Othello / IA** (ESILV — Data Science et Intelligence Artificielle).
+Module Othello du projet **IA de jeux** (ESILV — Data Science et Intelligence Artificielle).
 
-Ce module implémente le jeu du morpion joué contre une IA. Il sert d'**exercice
-d'entraînement** demandé dans le sujet : traduire le pseudo-code MinMax + Alpha-Bêta
-sur un jeu simple avant de l'adapter à Othello.
-
----
-
-## Contenu de la branche
-
-| Fichier | Rôle |
-|---------|------|
-| `NoeudMorpion.py` | La classe `NoeudMorpion` : un état de la partie (grille 3×3 + joueur à jouer). Génère les coups possibles (`successeurs`) et évalue une position (`heuristique`). |
-| `JeuMorpion.py` | La logique de jeu : algorithme `minimax` (avec élagage alpha-bêta), choix du coup de l'IA, saisie du joueur, détection de fin de partie et boucle de jeu. |
-| `Menu_principale.py` | Point d'entrée. Menu de sélection du jeu (Othello / Morpion / Quitter). |
+Le jeu se joue en console : un joueur humain affronte une IA (ou humain vs humain,
+ou IA vs IA). L'IA repose sur l'algorithme **MinMax avec élagage Alpha-Bêta** et une
+fonction d'évaluation combinant la force des positions et la mobilité.
 
 ---
 
-## Lancer le jeu
+## Architecture
 
-Prérequis : **Python 3** (aucune bibliothèque externe).
+Le code est découpé en 6 modules, chacun avec une seule responsabilité. Les
+dépendances vont toujours du haut vers le bas (aucune ne remonte) :
 
-```bash
-python Menu_principale.py
+```
+partie  →  { joueur, ia }  →  regles  →  plateau
+   │                            │
+   └──────────  constantes  ────┘   (socle, importé par tous)
 ```
 
-Puis choisir `2` pour lancer le morpion.
+| Fichier | Responsabilité |
+|---------|----------------|
+| `constantes.py` | Valeurs partagées : `VIDE`/`NOIR`/`BLANC`, les 8 `DIRECTIONS`, `couleur_nom()`. |
+| `plateau.py` | Affichage texte du plateau, comptage des pions, annonce du vainqueur. |
+| `regles.py` | **Cœur des règles** : `coups_valides()`, `peut_jouer()`, `jouer()` (pose + retournement). Source de vérité unique sur ce qui est légal. |
+| `joueur.py` | Joueur humain : saisie d'un coup (format `A1`) et validation via `regles`. |
+| `ia.py` | Joueur IA : classe `Noeud` (arbre de recherche), `minmax` alpha-bêta, façade `JoueurIA`. |
+| `partie.py` | Orchestration : boucle de jeu, alternance, passage de tour, fin de partie. |
+
+Le point d'entrée du jeu est la fonction `lancer_othello()` dans `partie.py`,
+appelée depuis le menu principal.
 
 ---
 
-## Comment jouer
+## Lancer et jouer
 
-- Au lancement, le jeu demande **qui commence** : le joueur (`1`) ou l'IA (`2`).
-- Le joueur **humain joue les `X`**, l'**IA joue les `O`**.
-- À chaque tour, saisir son coup **en une seule fois** : une lettre pour la colonne
-  (`A`, `B`, `C`) suivie d'un chiffre pour la ligne (`1`, `2`, `3`).
+Prérequis : **Python 3** et **NumPy** (`pip install numpy`).
 
-Exemple :
+Depuis le menu principal, choisir Othello ; ou directement :
 
-```
-X coup (ex: A1) : B2
+```python
+from partie import lancer_othello
+lancer_othello()
 ```
 
-La saisie tolère les minuscules et les espaces (`b 2` fonctionne). Une case déjà
-occupée ou un format incorrect sont rejetés et redemandés.
+**Règles du jeu.** Les Noirs (`N`) commencent toujours. À son tour, un joueur pose
+un pion sur une case vide qui encadre au moins un pion adverse entre le pion posé et
+un pion de sa couleur ; les pions encadrés sont retournés. Si un joueur n'a aucun coup
+légal, il passe. La partie se termine quand aucun des deux joueurs ne peut jouer ; le
+gagnant est celui qui a le plus de pions.
 
-Grille (colonnes A–C, lignes 1–3) :
-
-```
-     A   B   C
- 1 :   |   |   |
-     -----------
- 2 :   |   |   |
-     -----------
- 3 :   |   |   |
-```
+**Saisie d'un coup.** Le joueur humain entre son coup en une fois, au format lettre +
+chiffre : la **lettre** (A–H) désigne la colonne, le **chiffre** (1–8) la ligne — par
+exemple `D3`. La saisie tolère les minuscules et les espaces. Les coups possibles sont
+affichés à chaque tour.
 
 ---
 
 ## L'intelligence artificielle
 
-L'IA utilise l'algorithme **MinMax avec élagage Alpha-Bêta**.
+L'IA (`ia.py`) explore l'arbre du jeu avec **MinMax + élagage Alpha-Bêta**.
 
-- **Convention** : `X` est le joueur **Max**, `O` le joueur **Min**.
-- **Profondeur d'exploration** : 6 (paramètre passé à `prochain_coup_morpion`).
-- **Fonction d'évaluation** (`heuristique`) :
-  - `+100` / `-100` : victoire de Max / de Min ;
-  - `±10` par alignement (ligne, colonne, diagonale) contenant 2 symboles
-    identiques et 1 case vide (menace).
-- L'exploration s'**arrête dès qu'une victoire est détectée** (`abs(évaluation) == 100`),
-  ce qui évite d'explorer des positions déjà gagnées et réduit le nombre de nœuds visités.
-
-### Fonctions clés
-
-- `minimax(noeud, profondeur, alpha, beta)` — évaluation récursive avec élagage.
-- `prochain_coup_morpion(noeud, profondeur)` — choisit et renvoie les coordonnées du meilleur coup pour l'IA.
-- `etat_partie(grille)` — renvoie le symbole gagnant, `'-'` (nul) ou `None` (partie en cours).
+- **`Noeud`** représente un état du jeu. `successeurs()` engendre un enfant par coup
+  légal (en s'appuyant sur `regles`), avec le plateau résultant et l'adversaire au trait.
+- **`est_feuille()`** détecte la fin de partie (aucun des deux joueurs ne peut jouer).
+- **Heuristique** (du point de vue du Noir, positif = favorable au Noir) :
+  - *force des positions* via une table de poids (coins = +120, cases pièges près des
+    coins = négatives) ;
+  - *mobilité* : différence du nombre de coups possibles entre les deux joueurs.
+- **`JoueurIA`** est la façade manipulée par `partie`. Elle expose la **même interface**
+  que le joueur humain (`choisir_coup(regles)` → `(lig, col, pions)`), ce qui rend les
+  deux types de joueurs interchangeables dans la boucle de jeu.
+- La **profondeur** d'exploration est réglable (2 à 4).
 
 ---
 
-## Remarques
+## Convention de coordonnées
 
-- L'IA en `O` joue de façon défensive/optimale : dans les cas testés elle prend les
-  victoires et bloque les menaces.
-- Ce module est volontairement simple. Les principes (nœuds, successeurs, minimax
-  alpha-bêta, heuristique) seront **réutilisés et adaptés** pour l'IA d'Othello,
-  avec un plateau 8×8 et une heuristique à plusieurs critères (nombre de pions,
-  force des positions, mobilité).
+Une seule convention dans tout le code : le plateau est `tab[ligne][colonne]`, indices
+0 à 7. Les cases valent `0` (vide), `1` (Noir), `2` (Blanc). La traduction vers la
+notation `A1` (colonne = lettre, ligne = chiffre) ne se fait qu'à l'affichage et à la
+saisie.
+
+---
+
+## État d'avancement
+
+Le moteur (plateau, règles, saisie, boucle de jeu) est complet et testé ; humain vs
+humain et IA vs IA jouent des parties entières. La dernière brique en cours de
+finalisation est le **`minmax` récursif avec élagage** (une version provisoire à
+évaluation directe est en place le temps de valider la façade). L'**interface
+graphique** (bonus) est une couche de présentation séparée, à brancher une fois le jeu
+console finalisé.
