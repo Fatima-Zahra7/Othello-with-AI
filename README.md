@@ -38,7 +38,7 @@ MinMax.
 
 | Fichier | Rôle |
 |---------|------|
-| `NoeudMorpion.py` | La classe `Noeud_Morpion` : un état de la partie (grille + joueur), génération des coups possibles, évaluation. |
+| `iaMorpion.py` | La classe `Noeud_Morpion` : un état de la partie (grille + joueur), génération des coups possibles, évaluation. |
 | `JeuMorpion.py` | L'algorithme `minimax` (avec élagage alpha-bêta), le choix du coup de l'IA, la saisie et la boucle de jeu. |
 
 ## Lancement et déroulement
@@ -80,9 +80,9 @@ Les dépendances entre modules vont toujours dans le même sens (des couches hau
 les couches basses), sans jamais remonter :
 
 ```
-partie  →  { joueur, ia }  →  regles  →  plateau
-   │                            │
-   └──────────  constantes  ────┘   (socle, importé par tous)
+jeuOthello  →  { joueur, ia }  →  regles  →  plateau
+   │                              │
+   └──────────   constantes   ────┘     (socle, importé par tous)
 ```
 
 | Fichier | Responsabilité |
@@ -92,7 +92,7 @@ partie  →  { joueur, ia }  →  regles  →  plateau
 | `regles.py` | Cœur des règles : `coups_valides()`, `peut_jouer()`, `jouer()` (pose + retournement). |
 | `joueur.py` | Joueur humain : saisie d'un coup (format `A1`) et validation via les règles. |
 | `ia.py` | Joueur IA : la classe `Noeud` (arbre de recherche), l'algorithme `minmax`, la façade `JoueurIA`. |
-| `partie.py` | Orchestration : boucle de jeu, alternance, passage de tour, fin de partie, point d'entrée `lancer_othello()`. |
+| `jeuOthello.py` | Orchestration : boucle de jeu, alternance, passage de tour, fin de partie, point d'entrée `lancer_othello()`. |
 
 Un principe fort a guidé ce découpage : **une seule source de vérité pour les règles.**
 Toute la logique « ce coup est-il légal et quels pions retourne-t-il ? » est concentrée
@@ -123,7 +123,7 @@ Prérequis : **Python 3** et **NumPy** (`pip install numpy`).
 Depuis le menu principal, choisir Othello ; ou directement :
 
 ```python
-from partie import lancer_othello
+from jeuOthello import lancer_othello
 lancer_othello()
 ```
 
