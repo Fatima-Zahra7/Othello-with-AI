@@ -3,7 +3,7 @@ Created on Fri May  5 17:51:57 2023
 """
 
 
-class NoeudMorpion:
+class Noeud:
     """Un noeud représente un état quelconque de la partie."""
 
     def __init__(self, grille, joueur, enfants=None):

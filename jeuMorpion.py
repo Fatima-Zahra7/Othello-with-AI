@@ -3,7 +3,7 @@ Created on Fri May  5 17:53:00 2023
 
 @author: ing
 """
-from NoeudMorpion import *
+from iaMorpion import *
 
 
 # %% Minimax
@@ -157,7 +157,7 @@ def morpion():
         [' ', ' ', ' '],
         [' ', ' ', ' ']]
 
-    noeud = NoeudMorpion(grille, 'O')
+    noeud = Noeud(grille, 'O')
 
     while True:
         afficher_grille(grille)

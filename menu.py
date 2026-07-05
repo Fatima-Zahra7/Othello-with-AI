@@ -1,7 +1,7 @@
 """
 Created on Mon May  8 02:18:30 2023
 """
-from JeuMorpion import morpion
+from jeuMorpion import morpion
 
 
 def main():
