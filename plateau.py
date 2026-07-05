@@ -34,13 +34,3 @@ class Plateau:
             print(f"Le joueur Blanc a gagné : {blancs} à {noirs}")
         else:
             print(f"Match nul : {noirs} partout")
-
-
-def affichage_complet():
-    tab = np.zeros((8, 8))
-    tab[3][3] = 2
-    tab[3][4] = 1
-    tab[4][3] = 1
-    tab[4][4] = 2
-    Plateau(tab).afficher()
-

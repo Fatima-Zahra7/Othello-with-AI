@@ -1,7 +1,7 @@
 """
 Created on Mon May  8 02:18:30 2023
 """
-from plateau import affichage_complet
+from jeuOthello import lancer_othello
 
 
 def main():
@@ -13,7 +13,7 @@ def main():
         try:
             choice = int(input("Enter your choice (1, 2, or 3): "))
             if choice == 1:
-                affichage_complet()
+                lancer_othello()
             elif choice == 2:
                 print("Morpion !")
             elif choice == 3:
