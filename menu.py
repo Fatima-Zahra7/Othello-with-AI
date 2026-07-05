@@ -2,7 +2,7 @@
 Created on Mon May  8 02:18:30 2023
 """
 from jeuOthello import lancer_othello
-
+from jeuMorpion import lancer_morpion
 
 def main():
     while True:
@@ -15,7 +15,7 @@ def main():
             if choice == 1:
                 lancer_othello()
             elif choice == 2:
-                print("Morpion !")
+                lancer_morpion()
             elif choice == 3:
                 print("Thank you for playing. Goodbye!")
                 break

@@ -111,3 +111,32 @@ class NoeudMorpion:
                 score -= 10
 
         return score
+
+def minimax(noeud, profondeur, alpha, beta):
+    evaluation = noeud.heuristique()
+    if noeud.est_feuille() or profondeur == 0 or abs(evaluation) == 100:
+        return evaluation
+
+    if noeud.est_noeud_max():  # Noeud Max
+        valeur = None
+        noeud.successeurs()
+        for enfant in noeud.enfants:
+            valeur_enfant = minimax(enfant, profondeur - 1, alpha, beta)
+            if valeur is None or valeur < valeur_enfant:
+                valeur = valeur_enfant
+            if valeur >= beta:
+                return valeur
+            alpha = max(alpha, valeur)
+
+    else:  # Noeud Min
+        valeur = None
+        noeud.successeurs()
+        for enfant in noeud.enfants:
+            valeur_enfant = minimax(enfant, profondeur - 1, alpha, beta)
+            if valeur is None or valeur > valeur_enfant:
+                valeur = valeur_enfant
+            if valeur <= alpha:
+                return valeur
+            beta = min(beta, valeur)
+
+    return valeur

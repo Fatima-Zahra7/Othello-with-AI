@@ -3,38 +3,7 @@ Created on Fri May  5 17:53:00 2023
 
 @author: ing
 """
-from NoeudMorpion import *
-
-
-# %% Minimax
-def minimax(noeud, profondeur, alpha, beta):
-    evaluation = noeud.heuristique()
-    if noeud.est_feuille() or profondeur == 0 or abs(evaluation) == 100:
-        return evaluation
-
-    if noeud.est_noeud_max():  # Noeud Max
-        valeur = None
-        noeud.successeurs()
-        for enfant in noeud.enfants:
-            valeur_enfant = minimax(enfant, profondeur - 1, alpha, beta)
-            if valeur is None or valeur < valeur_enfant:
-                valeur = valeur_enfant
-            if valeur >= beta:
-                return valeur
-            alpha = max(alpha, valeur)
-
-    else:  # Noeud Min
-        valeur = None
-        noeud.successeurs()
-        for enfant in noeud.enfants:
-            valeur_enfant = minimax(enfant, profondeur - 1, alpha, beta)
-            if valeur is None or valeur > valeur_enfant:
-                valeur = valeur_enfant
-            if valeur <= alpha:
-                return valeur
-            beta = min(beta, valeur)
-
-    return valeur
+from iaMorpion import NoeudMorpion, minimax
 
 
 # %% Choix du prochain coup via minimax
@@ -60,7 +29,6 @@ def prochain_coup_morpion(noeud, profondeur):
                 return i, j
 
 
-# %%
 def lettre_vers_indice(lettre):
     return ord(lettre) - ord('A')
 
@@ -92,7 +60,6 @@ def saisir_coordonnees(grille, joueur):
         return grille, x, y
 
 
-# %%
 def etat_partie(grille):
     # Renvoie le symbole gagnant, '-' si nul, ou None si la partie continue.
     # Lignes
@@ -150,7 +117,7 @@ def choisir_premier_joueur():
         print("Choix invalide, tapez 1 ou 2.")
 
 
-def morpion():
+def lancer_morpion():
     joueur_courant = choisir_premier_joueur()  # 'X' = humain, 'O' = IA
     grille = [
         [' ', ' ', ' '],
