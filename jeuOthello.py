@@ -59,6 +59,20 @@ class Partie:
         self.plateau.annoncer_vainqueur()
 
 
+def choix_premier():
+    """Demande qui joue en premier : IA ou Humain"""
+    while True:
+        print("Qui sera le premier a jouer:")
+        print(" 1: IA")
+        print(" 2: joueur")
+        saisie = input("Votre choix (1 ou 2) : ").strip()
+
+        if saisie in ("1", "2"):
+            return int(saisie)
+
+        print("Choix invalide, tapez 1 ou 2.\n")
+
+
 def choix_profondeur():
     """Demande la profondeur d'exploration de l'IA (entre 2 et 4) et la renvoie."""
     while True:
@@ -77,9 +91,14 @@ def choix_profondeur():
 def lancer_othello():
     """Point d'entrée appelé par le menu (pour l'instant : humain contre humain)."""
     print("=== Othello ===")
-    choix = choix_profondeur()
+    premier = choix_premier()
+    profondeur = choix_profondeur()
 
-    noir = Joueur(NOIR)
-    blanc = JoueurIA(BLANC, choix)
+    if premier == 1:
+        noir = JoueurIA(NOIR, profondeur)
+        blanc = Joueur(BLANC)
+    else:
+        noir = Joueur(NOIR)
+        blanc = JoueurIA(BLANC, profondeur)
 
     Partie(noir, blanc).jouer()

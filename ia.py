@@ -82,7 +82,27 @@ class Noeud:
 # Pour l'instant : évaluation directe, sans exploration en profondeur.
 # ===========================================================================
 def minmax(noeud, profondeur, alpha, beta):
-    return noeud.heuristique()
+    if profondeur == 0:
+        return noeud.heuristique()
+
+    # Nœud MAX (c'est au Noir de jouer dans ce nœud)
+    if noeud.est_noeud_max():
+        valeur = float('-inf')
+        for enfant in noeud.successeurs().values():
+            valeur = max(valeur, minmax(enfant, profondeur-1, alpha, beta))
+            if valeur >= beta:
+                return valeur   # coupure beta : Min n'ira jamais ici
+            alpha = max(alpha, valeur)  # on relève notre borne
+        return valeur
+
+    else: # Nœud MIN (c'est au Blanc de jouer dans ce nœud)
+        valeur = float('inf')
+        for enfant in noeud.successeurs().values():
+            valeur = min(valeur, minmax(enfant, profondeur-1, alpha, beta))
+            if valeur <= alpha:
+                return valeur   # coupure alpha : Max n'ira jamais ici
+            beta = min(beta, valeur)    # on abaisse notre borne
+        return valeur
 
 
 # ===========================================================================
@@ -99,6 +119,9 @@ class JoueurIA:
 
     def get_couleur(self):
         return couleur_nom(self.joueur)
+
+    def get_profondeur(self):
+        return self.profondeur
 
     def choisir_coup(self, regles):
         """Choisit le meilleur coup via minmax et renvoie (lig, col, pions)."""
